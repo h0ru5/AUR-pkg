@@ -1,0 +1,4 @@
+ # Conky on a Logitech G19 keyboard display
+you can run an own X server on that little display. this runs one with conky on it.
+no PKGBUILD yet and paths need to be tidied up.
+

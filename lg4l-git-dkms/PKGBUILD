@@ -1,0 +1,56 @@
+_pkgbase=lg4l
+pkgname=lg4l-git-dkms
+pkgver=20161001
+pkgrel=1
+pkgdesc="Linux drivers for Logitech Gaming Keyboards (DKMS)"
+arch=('i686' 'x86_64')
+url="https://github.com/CMoH/lg4l"
+license=('GPL')
+depends=('dkms')
+conflicts=("${_pkgbase}")
+install=${pkgname}.install
+source=("$pkgname::git+https://github.com/CMoH/lg4l.git" 'dkms.conf' '90-lg4l.rules' 'Makefile')
+md5sums=('SKIP'
+         '325f067b6c1c2016f44da339e9182def'
+         '45a38ec9b79d6e4e53078c9471bc17db'
+         'dcf87193d1f840118b673255dfff24ee')
+
+build() {
+	cd "$srcdir/$pkgname"
+
+	# Build
+	msg2 "Starting make in $srcdir/$pkgname ..."
+	make
+}
+
+package() {
+	# Make Install
+	#	msg2 "Starting make install..."
+	cd "$srcdir/$pkgname"
+	#	make DESTDIR="${pkgdir}" install
+
+	# Manual Install
+	msg2 "Starting manual install..."
+	install -dm755 "$pkgdir/usr/lib/modules/$_extramodules/"
+	install -m644 *.ko "$pkgdir/usr/lib/modules/$_extramodules/"
+	install -dm755 "$pkgdir/usr/bin/"
+	install -m755 rebind "$pkgdir/usr/bin/lg4l-rebind"
+	install -dm755 "$pkgdir/usr/lib/udev/rules.d/"
+	install -m644 ../90-lg4l.rules "$pkgdir/usr/lib/udev/rules.d/"
+	find "$pkgdir" -name '*.ko' -exec gzip -9 {} +
+
+	msg2 "copying sources"
+
+	# Copy dkms.conf
+	install -Dm644 ../dkms.conf "${pkgdir}"/usr/src/${_pkgbase}-${pkgver}/dkms.conf
+
+	# Set name and version
+	sed -e "s/@_PKGBASE@/${_pkgbase}/" \
+		-e "s/@PKGVER@/${pkgver}/" \
+		-i "${pkgdir}"/usr/src/${_pkgbase}-${pkgver}/dkms.conf
+
+	# Copy sources (including Makefile)
+	cp -r ../${pkgname}/* "${pkgdir}"/usr/src/${_pkgbase}-${pkgver}/
+	msg2 "I am in $(pwd)"
+	cp ../Makefile "${pkgdir}"/usr/src/${_pkgbase}-${pkgver}/
+}

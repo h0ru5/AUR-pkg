@@ -1,0 +1,5 @@
+#!/bin/sh
+xinit ./xinitrc-g19 -- /usr/bin/X :1 -xf86config xorg.conf.g19 -novtswitch -sharevts -audit 0 vt12 &
+sleep 5
+x2x -south -from :0 -to :1 &
+

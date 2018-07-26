@@ -1,0 +1,24 @@
+# run profile to set $PATH and other env vars correctly
+#. ${HOME}/.bash_profile
+
+## turn on display
+xset dpms force on
+
+## disable sleep modes etc.
+xset -dpms
+
+## disable screensaver
+xset s off
+
+## turn off beep
+xset -b
+
+xset r rate 250 30
+
+## activate zapping (ctrl+alt+Bksp killall X)
+setxkbmap -option terminate:ctrl_alt_bksp
+
+# run initial programs
+#uxterm -ls -geometry 200x62+0+162 -fg white -bg black &
+#exec xterm -fg white -bg black -geometry 512x20 -e "top -w 80"
+conky -c /usr/local/g19-conky/conky.conf
